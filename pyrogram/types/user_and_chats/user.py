@@ -1054,3 +1054,24 @@ class User(Object, Update):
         """
 
         return await self._client.get_common_chats(self.id)
+
+    async def ask(self, text: str, *args, **kwargs):
+        """Send ``text`` to this user and wait for the next matching update.
+
+        A thin wrapper around :meth:`~pyrogram.Client.ask` bound to this user's id.
+        """
+        return await self._client.ask(self.id, text, *args, **kwargs)
+
+    async def listen(self, *args, **kwargs):
+        """Wait for the next matching update from this user.
+
+        A thin wrapper around :meth:`~pyrogram.Client.listen`.
+        """
+        return await self._client.listen(*args, user_id=self.id, **kwargs)
+
+    async def stop_listening(self, *args, **kwargs):
+        """Cancel pending listeners bound to this user.
+
+        A thin wrapper around :meth:`~pyrogram.Client.stop_listening`.
+        """
+        return await self._client.stop_listening(*args, user_id=self.id, **kwargs)

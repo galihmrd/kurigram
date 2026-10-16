@@ -2122,3 +2122,24 @@ class Chat(Object):
             ``bool``: On success, True is returned.
         """
         return await self._client.update_chat_notifications(self.id, mute=False)
+
+    async def ask(self, text: str, *args, **kwargs):
+        """Send ``text`` to this chat and wait for the next matching update.
+
+        A thin wrapper around :meth:`~pyrogram.Client.ask` bound to this chat's id.
+        """
+        return await self._client.ask(self.id, text, *args, **kwargs)
+
+    async def listen(self, *args, **kwargs):
+        """Wait for the next matching update in this chat.
+
+        A thin wrapper around :meth:`~pyrogram.Client.listen`.
+        """
+        return await self._client.listen(*args, chat_id=self.id, **kwargs)
+
+    async def stop_listening(self, *args, **kwargs):
+        """Cancel pending listeners bound to this chat.
+
+        A thin wrapper around :meth:`~pyrogram.Client.stop_listening`.
+        """
+        return await self._client.stop_listening(*args, chat_id=self.id, **kwargs)

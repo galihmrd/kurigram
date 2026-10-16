@@ -10053,3 +10053,41 @@ class Message(Object, Update):
             message_id=self.id,
             translate_to_language_code=translate_to_language_code,
         )
+
+    async def wait_for_click(
+        self,
+        from_user_id=None,
+        timeout: float | None = None,
+        filters=None,
+        alert: bool | str = True,
+    ):
+        """Wait until one of this message's inline buttons is pressed.
+
+        Parameters:
+            from_user_id: Only accept the click from this user (or group of users).
+
+            timeout (``float``, *optional*):
+                Seconds to wait before raising
+                :class:`~pyrogram.listeners.ListenerTimeout`. ``None`` waits forever.
+
+            filters (:obj:`~pyrogram.filters`, *optional*):
+                Extra filter the callback query must pass.
+
+            alert (``bool`` | ``str``, *optional*):
+                Whether (and with which text) to alert someone who presses a button
+                of this message but is not ``from_user_id``.
+
+        Returns:
+            :obj:`~pyrogram.types.CallbackQuery`: The button press.
+        """
+        from pyrogram.listeners import ListenerTypes  # noqa: PLC0415  # deferred: avoids an import cycle
+
+        return await self._client.listen(
+            listener_type=ListenerTypes.CALLBACK_QUERY,
+            timeout=timeout,
+            filters=filters,
+            unallowed_click_alert=alert,
+            chat_id=self.chat.id,
+            user_id=from_user_id,
+            message_id=self.id,
+        )
