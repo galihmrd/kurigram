@@ -92,3 +92,6 @@ class MessageMediaType(AutoName):
 
     CHECKLIST = auto()
     "Checklist media"
+
+    WIDGET = auto()
+    "Widget media"

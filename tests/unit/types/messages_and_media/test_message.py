@@ -18,6 +18,7 @@
 
 from __future__ import annotations as _annotations
 
+import zlib
 from typing import Final
 
 import pytest
@@ -84,6 +85,28 @@ async def test_a_direct_message_with_a_topic_keeps_its_id():
     )
 
     assert parsed.direct_messages_topic_id == USER_ID
+
+
+@pytest.mark.asyncio
+async def test_a_widget_message_parses_its_widget():
+    raw_message = message()
+    raw_message.media = raw.types.MessageMediaWidget(
+        width=320,
+        height=200,
+        payload=zlib.compress(b"<b>hi</b>", 9),
+        chat_data='{"seen": false}',
+    )
+    raw_message.message = "caption"
+
+    parsed = await types.Message._parse(
+        client(), raw_message, users={}, chats={CHANNEL_ID: monoforum_chat()}
+    )
+
+    assert parsed.media == enums.MessageMediaType.WIDGET
+    assert parsed.widget is not None
+    assert parsed.widget.html == "<b>hi</b>"
+    assert parsed.widget.chat_data == '{"seen": false}'
+    assert parsed.caption == "caption"
 
 
 def message_with_url_button(label: str) -> types.Message:

@@ -110,6 +110,9 @@ class ExternalReplyInfo(Object):
 
         venue (:obj:`~pyrogram.types.Venue`, *optional*):
             Message is a venue, information about the venue.
+
+        widget (:obj:`~pyrogram.types.Widget`, *optional*):
+            Message is a widget, information about the widget.
     """
 
     def __init__(
@@ -142,6 +145,7 @@ class ExternalReplyInfo(Object):
         location: types.Location | None = None,
         poll: types.Poll | None = None,
         venue: types.Venue | None = None,
+        widget: types.Widget | None = None,
     ):
         super().__init__(client)
 
@@ -171,6 +175,7 @@ class ExternalReplyInfo(Object):
         self.location = location
         self.poll = poll
         self.venue = venue
+        self.widget = widget
 
     @staticmethod
     async def _parse(
@@ -206,6 +211,7 @@ class ExternalReplyInfo(Object):
         location = None
         poll = None
         venue = None
+        widget = None
 
         media = reply.reply_media
         media_type = None
@@ -304,6 +310,9 @@ class ExternalReplyInfo(Object):
             elif isinstance(media, raw.types.MessageMediaToDo):
                 checklist = await types.Checklist._parse(client, media, users, chats)
                 media_type = enums.MessageMediaType.CHECKLIST
+            elif isinstance(media, raw.types.MessageMediaWidget):
+                widget = types.Widget._parse(media)
+                media_type = enums.MessageMediaType.WIDGET
             else:
                 media = None
 
@@ -342,4 +351,5 @@ class ExternalReplyInfo(Object):
             poll=poll,
             venue=venue,
             checklist=checklist,
+            widget=widget,
         )

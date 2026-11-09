@@ -95,6 +95,9 @@ class MessageContent(Object):
 
         checklist (:obj:`~pyrogram.types.Checklist`, *optional*):
             The message is a checklist message.
+
+        widget (:obj:`~pyrogram.types.Widget`, *optional*):
+            The message is a widget message.
     """
 
     def __init__(
@@ -122,6 +125,7 @@ class MessageContent(Object):
         dice: types.Dice | None = None,
         paid_media: types.PaidMediaInfo | None = None,
         checklist: types.Checklist | None = None,
+        widget: types.Widget | None = None,
     ):
         super().__init__()
 
@@ -147,6 +151,7 @@ class MessageContent(Object):
         self.dice = dice
         self.paid_media = paid_media
         self.checklist = checklist
+        self.widget = widget
 
     @staticmethod
     async def _parse(
@@ -180,6 +185,7 @@ class MessageContent(Object):
         dice = None
         paid_media = None
         checklist = None
+        widget = None
 
         media_type = enums.MessageMediaType.UNSUPPORTED
 
@@ -290,6 +296,9 @@ class MessageContent(Object):
         elif isinstance(media, raw.types.MessageMediaToDo):
             media_type = enums.MessageMediaType.CHECKLIST
             checklist = await types.Checklist._parse(client, media, users, chats)
+        elif isinstance(media, raw.types.MessageMediaWidget):
+            widget = types.Widget._parse(media)
+            media_type = enums.MessageMediaType.WIDGET
 
         return MessageContent(
             type=media_type,
@@ -314,4 +323,5 @@ class MessageContent(Object):
             dice=dice,
             paid_media=paid_media,
             checklist=checklist,
+            widget=widget,
         )

@@ -395,6 +395,7 @@ from .messages_and_media import (
     Voice,
     WebAppData,
     WebPage,
+    Widget,
     WriteAccessAllowed,
 )
 from .object import Object
@@ -1015,5 +1016,6 @@ __all__ = [
     "WebAppData",
     "WebAppInfo",
     "WebPage",
+    "Widget",
     "WriteAccessAllowed",
 ]
