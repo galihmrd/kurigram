@@ -395,6 +395,7 @@ def pyrogram_api():
             get_chat_member
             get_chat_members
             get_chat_members_count
+            reorder_active_usernames
             get_dialogs
             get_dialogs_count
             get_direct_messages_topics_by_id
@@ -1015,6 +1016,7 @@ def pyrogram_api():
             CommunityChatJoined
             CommunityChatRemoved
             TonWalletTransfer
+            UnpaidMessagesAllowedByLink
             TonConnectRequest
             Checklist
             RefundedPayment
