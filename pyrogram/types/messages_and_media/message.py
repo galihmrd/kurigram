@@ -10093,7 +10093,8 @@ class Message(Object, Update):
         """Wait until one of this message's inline buttons is pressed.
 
         Parameters:
-            from_user_id: Only accept the click from this user (or group of users).
+            from_user_id (``int`` | Iterable, *optional*):
+                Only accept the click from this user (or group of users).
 
             timeout (``float``, *optional*):
                 Seconds to wait before raising

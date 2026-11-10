@@ -96,7 +96,7 @@ class Listeners:
             pass
 
     async def stop_listener(self: pyrogram.Client, listener: Listener) -> None:
-        """Cancel a pending listener; a coroutine waiting on it gets :class:`ListenerStopped`."""
+        """Cancel a pending listener; a coroutine waiting on it gets :class:`~pyrogram.listeners.ListenerStopped`."""
         self.remove_listener(listener)
         if listener.future is not None and not listener.future.done():
             listener.future.set_exception(ListenerStopped())
@@ -180,8 +180,17 @@ class Listeners:
                 For callback-query listeners, whether (and with which text) to alert a
                 user that presses the awaited button but does not pass ``filters``.
 
-            chat_id / user_id / message_id / inline_message_id:
-                Optional ids to restrict the listener. Accepts a single id or a group of ids.
+            chat_id (``int`` | ``str`` | Iterable, *optional*):
+                Only resume on updates from this chat, or from any id in the group.
+
+            user_id (``int`` | ``str`` | Iterable, *optional*):
+                Only resume on updates sent by this user, or by any id in the group.
+
+            message_id (``int`` | Iterable, *optional*):
+                Only resume on this message (or any message in the group).
+
+            inline_message_id (``str`` | Iterable, *optional*):
+                Only resume on this inline message (or any inline message in the group).
 
         Returns:
             The matched :obj:`~pyrogram.types.Message` or :obj:`~pyrogram.types.CallbackQuery`.

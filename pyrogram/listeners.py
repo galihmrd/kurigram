@@ -21,11 +21,11 @@
 
 A *listener* is a pending expectation: a coroutine registers it and is resumed
 with the first incoming update that satisfies it.  It is matched on a
-:class:`_Target` (chat / user / message / inline-message id, ``None`` acting as
+``_Target`` (chat / user / message / inline-message id, ``None`` acting as
 a wildcard) plus an optional Pyrogram :obj:`~pyrogram.filters.Filter`.
 
 Dispatch happens through two internal handlers that live in a dedicated
-high-priority group (:data:`LISTENER_GROUP`), so a waiting listener consumes the
+high-priority group (``LISTENER_GROUP``), so a waiting listener consumes the
 update it was waiting for and regular handlers never see it.  When no listener
 matches, the handlers stay out of the way and dispatch proceeds as usual.
 """
@@ -76,7 +76,7 @@ class _Target:
 
     Each field is either ``None`` (wildcard, matches anything) or a set of
     accepted values.  A listener target is matched against the target of an
-    incoming update with :meth:`matches`.
+    incoming update with ``matches``.
     """
 
     chat: set[Any] | None = None
@@ -132,12 +132,12 @@ class ListenerTimeout(asyncio.TimeoutError):
 
 
 class ListenerStopped(Exception):
-    """A pending listener was cancelled through :meth:`Client.stop_listening`."""
+    """A pending listener was cancelled through :meth:`~pyrogram.Client.stop_listening`."""
 
 
 @dataclass
 class Listener:
-    """A pending expectation registered by :meth:`Client.listen`."""
+    """A pending expectation registered by :meth:`~pyrogram.Client.listen`."""
 
     listener_type: ListenerTypes
     target: _Target
@@ -148,7 +148,7 @@ class Listener:
 
 
 def message_target(message: Message) -> _Target:
-    """Build the :class:`_Target` describing an incoming :obj:`~pyrogram.types.Message`."""
+    """Build the ``_Target`` describing an incoming :obj:`~pyrogram.types.Message`."""
     sender = getattr(message, "from_user", None)
     chat = getattr(message, "chat", None)
     message_id = getattr(message, "id", None)
@@ -160,7 +160,7 @@ def message_target(message: Message) -> _Target:
 
 
 def callback_query_target(query: CallbackQuery) -> _Target:
-    """Build the :class:`_Target` describing an incoming :obj:`~pyrogram.types.CallbackQuery`."""
+    """Build the ``_Target`` describing an incoming :obj:`~pyrogram.types.CallbackQuery`."""
     sender = getattr(query, "from_user", None)
     message = getattr(query, "message", None)
     chat = getattr(message, "chat", None) if message is not None else None
