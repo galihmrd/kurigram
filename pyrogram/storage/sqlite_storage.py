@@ -389,15 +389,18 @@ class SQLiteStorage(Storage):
     async def set_update_state(self, update_state: UpdateState | Iterable[UpdateState]):
         states = [update_state] if isinstance(update_state, UpdateState) else update_state
 
-        self.conn.executemany(
-            "INSERT INTO update_state (id, pts, qts, date, seq) VALUES (?, ?, ?, ?, ?) "
-            "ON CONFLICT(id) DO UPDATE SET "
-            "pts = COALESCE(excluded.pts, update_state.pts), "
-            "qts = COALESCE(excluded.qts, update_state.qts), "
-            "date = COALESCE(excluded.date, update_state.date), "
-            "seq = COALESCE(excluded.seq, update_state.seq)",
-            [(state.id, state.pts, state.qts, state.date, state.seq) for state in states],
-        )
+        # Commit per write: pts persists even if the process dies, otherwise a
+        #  restart replays every message since the last clean shutdown.
+        with self.conn:
+            self.conn.executemany(
+                "INSERT INTO update_state (id, pts, qts, date, seq) VALUES (?, ?, ?, ?, ?) "
+                "ON CONFLICT(id) DO UPDATE SET "
+                "pts = COALESCE(excluded.pts, update_state.pts), "
+                "qts = COALESCE(excluded.qts, update_state.qts), "
+                "date = COALESCE(excluded.date, update_state.date), "
+                "seq = COALESCE(excluded.seq, update_state.seq)",
+                [(state.id, state.pts, state.qts, state.date, state.seq) for state in states],
+            )
 
     async def delete_update_state(self, state_id):
         if isinstance(state_id, int):
