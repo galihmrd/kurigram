@@ -511,6 +511,7 @@ RESULT_ID_EMPTY	Result ID empty.
 RESULT_ID_INVALID	The given result cannot be used to send the selection to the bot.
 RESULT_TYPE_INVALID	The result type is invalid.
 REVOTE_NOT_ALLOWED	You cannot change your vote.
+RICH_MESSAGE_PHOTO_NO_MEDIA_FOUND	The photo media of the rich message could not be found.
 RICH_MESSAGE_UNSUPPORTED	The rich message is not supported.
 RIGHTS_NOT_MODIFIED	The new admin rights are equal to the old rights, no change was made.
 RINGTONE_INVALID	The specified ringtone is invalid.
