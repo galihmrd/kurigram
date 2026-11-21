@@ -1,20 +1,22 @@
-#  Pyrogram - Telegram MTProto API Client Library for Python
+#  Kurigram - Telegram MTProto API Client Library for Python
+#
 #  Copyright (C) 2017-present Dan <https://github.com/delivrance>
+#  Copyright (C) 2024-present KurimuzonAkuma <https://github.com/KurimuzonAkuma>
 #
-#  This file is part of Pyrogram.
+#  This file is part of Kurigram.
 #
-#  Pyrogram is free software: you can redistribute it and/or modify
+#  Kurigram is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published
 #  by the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Pyrogram is distributed in the hope that it will be useful,
+#  Kurigram is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #  GNU Lesser General Public License for more details.
 #
 #  You should have received a copy of the GNU Lesser General Public License
-#  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Kurigram. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations as _annotations
 
@@ -28,7 +30,7 @@ if TYPE_CHECKING:
 
 
 class Widget(Object):
-    """Describes an HTML widget.
+    """This object describes an `HTML widget <https://core.telegram.org/bots/widgets>`_.
 
     Parameters:
         id (``int``, *optional*):
@@ -65,6 +67,9 @@ class Widget(Object):
 
         background_query (``bool``, *optional*):
             True, if the widget may send queries to the bot in the background.
+
+        raw (:obj:`~pyrogram.raw.types.MessageMediaWidget`, *optional*):
+            The raw widget object, as received from the Telegram API.
     """
 
     def __init__(
@@ -80,7 +85,8 @@ class Widget(Object):
         can_query: bool | None = None,
         is_copy: bool | None = None,
         background_query: bool | None = None,
-    ):
+        raw: raw.types.MessageMediaWidget | None = None,
+    ) -> None:
         super().__init__()
 
         self.id = id
@@ -93,14 +99,16 @@ class Widget(Object):
         self.can_query = can_query
         self.is_copy = is_copy
         self.background_query = background_query
+        self.raw = raw
 
     @staticmethod
-    def _parse(media: raw.types.MessageMediaWidget) -> Widget:
+    def _parse(media: raw.types.MessageMediaWidget) -> Widget | None:
         html = None
 
         if media.payload:
             try:
-                html = zlib.decompress(media.payload).decode("utf-8")
+                # Adding 32 lets zlib detect either a zlib or a gzip header.
+                html = zlib.decompress(media.payload, wbits=zlib.MAX_WBITS | 32).decode("utf-8")
             except (UnicodeDecodeError, zlib.error):
                 html = None
 
@@ -115,4 +123,5 @@ class Widget(Object):
             can_query=media.can_query,
             is_copy=media.is_copy,
             background_query=media.background_query,
+            raw=media,
         )

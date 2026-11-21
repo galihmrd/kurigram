@@ -1,20 +1,22 @@
-#  Pyrogram - Telegram MTProto API Client Library for Python
+#  Kurigram - Telegram MTProto API Client Library for Python
+#
 #  Copyright (C) 2017-present Dan <https://github.com/delivrance>
+#  Copyright (C) 2024-present KurimuzonAkuma <https://github.com/KurimuzonAkuma>
 #
-#  This file is part of Pyrogram.
+#  This file is part of Kurigram.
 #
-#  Pyrogram is free software: you can redistribute it and/or modify
+#  Kurigram is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU Lesser General Public License as published
 #  by the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
 #
-#  Pyrogram is distributed in the hope that it will be useful,
+#  Kurigram is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 #  GNU Lesser General Public License for more details.
 #
 #  You should have received a copy of the GNU Lesser General Public License
-#  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+#  along with Kurigram. If not, see <https://www.gnu.org/licenses/>.
 
 from __future__ import annotations as _annotations
 
@@ -77,6 +79,9 @@ class ExternalReplyInfo(Object):
         voice (:obj:`~pyrogram.types.Voice`, *optional*):
             Message is a voice message, information about the file.
 
+        widget (:obj:`~pyrogram.types.Widget`, *optional*):
+            Message is an HTML widget, information about the widget.
+
         has_media_spoiler (``bool``, *optional*):
             True, if the message media is covered by a spoiler animation.
 
@@ -110,9 +115,6 @@ class ExternalReplyInfo(Object):
 
         venue (:obj:`~pyrogram.types.Venue`, *optional*):
             Message is a venue, information about the venue.
-
-        widget (:obj:`~pyrogram.types.Widget`, *optional*):
-            Message is a widget, information about the widget.
     """
 
     def __init__(
@@ -134,6 +136,7 @@ class ExternalReplyInfo(Object):
         video: types.Video | None = None,
         video_note: types.VideoNote | None = None,
         voice: types.Voice | None = None,
+        widget: types.Widget | None = None,
         has_media_spoiler: bool | None = None,
         checklist: types.Checklist | None = None,
         contact: types.Contact | None = None,
@@ -145,7 +148,6 @@ class ExternalReplyInfo(Object):
         location: types.Location | None = None,
         poll: types.Poll | None = None,
         venue: types.Venue | None = None,
-        widget: types.Widget | None = None,
     ):
         super().__init__(client)
 
@@ -164,6 +166,7 @@ class ExternalReplyInfo(Object):
         self.video = video
         self.video_note = video_note
         self.voice = voice
+        self.widget = widget
         self.has_media_spoiler = has_media_spoiler
         self.checklist = checklist
         self.contact = contact
@@ -175,7 +178,6 @@ class ExternalReplyInfo(Object):
         self.location = location
         self.poll = poll
         self.venue = venue
-        self.widget = widget
 
     @staticmethod
     async def _parse(
@@ -201,6 +203,7 @@ class ExternalReplyInfo(Object):
         video_note = None
         has_media_spoiler = None
         voice = None
+        widget = None
         checklist = None
         contact = None
         dice = None
@@ -211,7 +214,6 @@ class ExternalReplyInfo(Object):
         location = None
         poll = None
         venue = None
-        widget = None
 
         media = reply.reply_media
         media_type = None
@@ -307,12 +309,12 @@ class ExternalReplyInfo(Object):
             elif isinstance(media, raw.types.MessageMediaPaidMedia):
                 paid_media = types.PaidMediaInfo._parse(client, media)
                 media_type = enums.MessageMediaType.PAID_MEDIA
-            elif isinstance(media, raw.types.MessageMediaToDo):
-                checklist = await types.Checklist._parse(client, media, users, chats)
-                media_type = enums.MessageMediaType.CHECKLIST
             elif isinstance(media, raw.types.MessageMediaWidget):
                 widget = types.Widget._parse(media)
                 media_type = enums.MessageMediaType.WIDGET
+            elif isinstance(media, raw.types.MessageMediaToDo):
+                checklist = await types.Checklist._parse(client, media, users, chats)
+                media_type = enums.MessageMediaType.CHECKLIST
             else:
                 media = None
 
@@ -340,6 +342,7 @@ class ExternalReplyInfo(Object):
             video=video,
             video_note=video_note,
             voice=voice,
+            widget=widget,
             has_media_spoiler=has_media_spoiler,
             contact=contact,
             dice=dice,
@@ -351,5 +354,4 @@ class ExternalReplyInfo(Object):
             poll=poll,
             venue=venue,
             checklist=checklist,
-            widget=widget,
         )
